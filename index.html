@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Typeeveryday — ฝึกพิมพ์สัมผัสสู่ระดับโปรแกรมเมอร์</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="alternate icon" href="favicon.ico">
+  <link rel="stylesheet" href="styles.css?v=4.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="app-header">
+    <div class="brand-section">
+      <div class="brand-logo">
+        <span>⚡</span> Typeeveryday
+      </div>
+    </div>
+
+    <!-- Mode Selectors -->
+    <nav class="nav-modes">
+      <button class="mode-btn active" data-mode="course" title="เรียนเรียงตามเลเวล 1-6 พร้อมปลดล็อก">
+        <span>📚</span> หลักสูตร
+      </button>
+      <button class="mode-btn" data-mode="timed" title="ทดสอบความเร็วแบบจับเวลา 30 วินาที">
+        <span>⏱️</span> จับเวลา
+      </button>
+      <button class="mode-btn" data-mode="weak" id="weak-keys-btn" title="สร้างแบบฝึกเจาะจงปุ่มที่กดผิดบ่อย">
+        <span>🎯</span> ซ่อมจุดอ่อน
+      </button>
+      <button class="mode-btn" data-mode="free" title="ฝึกโค้ดดิ้งอิสระ">
+        <span>💻</span> โค้ดดิ้ง
+      </button>
+    </nav>
+
+    <!-- Header Actions -->
+    <div class="header-actions">
+      <button id="placement-btn" class="action-btn" title="ทดสอบวัดระดับทักษะปัจจุบันของคุณ">
+        <span>🎯</span> วัดระดับ
+      </button>
+      <button id="course-drawer-btn" class="action-btn" title="เลือกดูบทเรียนทั้งหมด">
+        <span>📑</span> เลือกบทเรียน
+      </button>
+      <button id="stats-btn" class="action-btn" title="ดูกราฟพัฒนาการและสถิติ">
+        <span>📊</span> สถิติ
+      </button>
+      <button id="no-peek-btn" class="action-btn" title="โหมดห้ามแอบมองคีย์บอร์ด (No-Peek Mode)">
+        <span id="no-peek-text">🙈 No-Peek: ปิด</span>
+      </button>
+      <button id="stop-on-error-btn" class="action-btn" title="เปิด/ปิด โหมดหยุดเมื่อพิมพ์ผิด (Stop on error)">
+        <span id="stop-on-error-text">🛑 Stop on error: เปิด</span>
+      </button>
+      <button id="sound-toggle-btn" class="action-btn" title="เปิด/ปิด/เปลี่ยนเสียงคีย์บอร์ด">
+        <span>🔊 Mechanical</span>
+      </button>
+      <button id="ghost-caret-btn" class="action-btn" title="เปิด/ปิด โหมด Ghost Caret (เคอร์เซอร์เงาแข่งกับสถิติเดิม)">
+        <span id="ghost-caret-text">👻 Ghost: ปิด</span>
+      </button>
+      <button id="shortcuts-btn" class="action-btn" title="ดูคีย์ลัดแป้นพิมพ์ (กด ?) [Shortcuts]">
+        <span>⌨️ ?</span>
+      </button>
+      <button id="theme-toggle-btn" class="action-btn" title="สลับธีม มืด / สว่าง">
+        <span>🌓</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <main class="main-content">
+
+    <!-- Phase 4.3: Daily Practice Goal & Streak Tracker Banner -->
+    <div id="daily-goal-banner" class="daily-goal-banner">
+      <div class="daily-goal-left">
+        <span class="daily-streak-badge">🔥 <strong id="main-streak-days">0</strong> วันติดต่อกัน</span>
+        <span class="daily-goal-text">เป้าหมายวันนี้: <strong id="main-today-mins">0</strong> / <strong id="main-target-mins">15</strong> นาที</span>
+      </div>
+      <div class="daily-goal-bar-wrap">
+        <div id="main-daily-progress-fill" class="daily-goal-progress-fill" style="width: 0%;"></div>
+      </div>
+      <span id="main-daily-pct" class="daily-goal-pct">0%</span>
+    </div>
+
+    <!-- Lesson Banner & Objectives -->
+    <section class="lesson-banner">
+      <div class="lesson-meta">
+        <h2 id="lesson-title">Level 1.1: ปุ่ม Anchor นิ้วชี้ F และ J</h2>
+        <p id="lesson-desc">สัมผัสตุ่มนูนบนปุ่ม F (นิ้วชี้ซ้าย) และ J (นิ้วชี้ขวา) เป็นจุดพักนิ้วหลัก</p>
+      </div>
+      <div class="lesson-targets">
+        <div class="target-badge" id="target-wpm-badge">
+          เป้าหมาย: <strong>12 WPM</strong>
+        </div>
+        <div class="target-badge" id="target-acc-badge">
+          ความแม่นยำ: <strong>90%</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- Language Selector for Coding Mode (SQL, C/C++, HTML, CSS, Java, Python, JS, Shell) -->
+    <div id="code-lang-selector" class="code-lang-selector" style="display: none;">
+      <div id="lang-pills-list" class="lang-pills-list"></div>
+      <button id="next-snippet-btn" class="next-snippet-btn" title="เปลี่ยนข้อความโค้ดถัดไป">
+        <span>🔀</span> สุ่มโค้ดถัดไป
+      </button>
+      <button id="free-paste-custom-btn" class="action-btn" title="วางข้อความของคุณเองเพื่อฝึกพิมพ์ (สูงสุด 2,000 ตัวอักษร)">
+        <span>📋</span> วางข้อความเอง
+      </button>
+    </div>
+
+    <!-- Phase 4.4: Timed Mode Duration Bar (30s, 60s, 120s) -->
+    <div id="timed-duration-bar" class="timed-duration-bar" style="display: none;">
+      <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); display: flex; align-items: center; gap: 0.35rem;">
+        <span>⏱️</span> เลือกระยะเวลาจับเวลา:
+      </span>
+      <div class="timed-duration-pills">
+        <button class="timed-pill active" data-seconds="30">30 วินาที</button>
+        <button class="timed-pill" data-seconds="60">60 วินาที (1 นาที)</button>
+        <button class="timed-pill" data-seconds="120">120 วินาที (2 นาที)</button>
+      </div>
+    </div>
+
+    <!-- Weak Keys Control Toolbar -->
+    <div id="weak-keys-bar" class="weak-keys-bar" style="display: none;">
+      <div class="weak-modes-group">
+        <button class="weak-filter-btn" id="weak-tab-toprow" data-source="toprow" title="ซ้อมปุ่มแถวบน e, r, t, i, u">
+          <span>🎯</span> แถวบน (E, R, T, I, U)
+        </button>
+        <button class="weak-filter-btn" id="weak-tab-recent" data-source="recent" title="เน้นจุดอ่อนจากรอบล่าสุดที่คุณเพิ่งเล่น">
+          <span>⚡</span> จุดอ่อนรอบล่าสุด
+        </button>
+        <button class="weak-filter-btn" id="weak-tab-custom" data-source="custom" title="เลือกปุ่มที่อยากซ้อมด้วยตัวเอง">
+          <span>✏️</span> เลือกปุ่มเอง
+        </button>
+        <button class="weak-filter-btn active" id="weak-tab-alltime" data-source="alltime" title="ดูจุดอ่อนสะสมทั้งหมด (Analytics Engine)">
+          <span>📊</span> สะสมทั้งหมด
+        </button>
+      </div>
+
+      <div class="weak-actions-group">
+        <button id="regen-weak-drill-btn" class="action-btn" title="สุ่มสร้างแบบฝึกชุดใหม่สำหรับปุ่มเหล่านี้">
+          <span>🔀</span> สุ่มแบบฝึกใหม่
+        </button>
+        <button id="clear-weak-keys-btn" class="action-btn" title="ล้างสถิติจุดอ่อนและข้อมูล Analytics ทั้งหมดเพื่อเริ่มบันทึกใหม่">
+          <span>🗑️</span> ล้างสถิติทั้งหมด
+        </button>
+      </div>
+
+      <!-- Quick Custom Key Picker -->
+      <div id="weak-custom-picker" class="weak-custom-picker" style="display: none;">
+        <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">คลิกเลือกปุ่มที่ต้องการซ้อม:</span>
+        <div id="picker-keys-chips" class="picker-keys-chips"></div>
+        <button id="apply-custom-keys-btn" class="action-btn btn-accent" style="padding: 0.3rem 0.75rem; font-size: 0.8rem;">
+          ⚡ เริ่มซ้อมปุ่มที่เลือก
+        </button>
+      </div>
+    </div>
+
+    <!-- Real-time Live Metrics -->
+    <section class="metrics-bar">
+      <div class="metric-card">
+        <div class="metric-label">WPM (คำต่อนาที)</div>
+        <div class="metric-value highlight-cyan" id="metric-wpm">--</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">ความแม่นยำ (Accuracy)</div>
+        <div class="metric-value highlight-green" id="metric-acc">100%</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">พิมพ์ผิด (Errors)</div>
+        <div class="metric-value highlight-red" id="metric-errors">0</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label" id="timer-label">เวลาที่ใช้</div>
+        <div class="metric-value highlight-yellow" id="metric-timer">0:00</div>
+      </div>
+    </section>
+
+    <!-- Thai Layout Detection Alert Banner -->
+    <div id="thai-warning-banner" class="thai-warning-banner" style="display: none;">
+      <span class="thai-warning-icon">⚠️</span>
+      <span class="thai-warning-text">ตรวจพบแป้นพิมพ์ภาษาไทย: กรุณากดปุ่ม <strong>Grave Accent (~)</strong> หรือ <strong>Alt+Shift</strong> เพื่อสลับเป็นภาษาอังกฤษ</span>
+      <button type="button" id="close-thai-warning-btn" class="thai-warning-close" title="ปิดการแจ้งเตือน">&times;</button>
+    </div>
+
+    <!-- Phase 4.2: Storage Corruption Alert Notice Banner -->
+    <div id="corruption-notice-banner" class="thai-warning-banner" style="display: none; background: rgba(245, 158, 11, 0.15); border-color: var(--accent-yellow); color: var(--accent-yellow);">
+      <span class="thai-warning-icon">⚠️</span>
+      <span class="thai-warning-text">ตรวจพบข้อมูลในเครื่องบางส่วนเสียหาย ระบบได้สำรองข้อมูลเดิมไว้และรีเซ็ตค่าเริ่มต้นให้เรียบร้อยแล้ว</span>
+      <button type="button" id="close-corruption-banner-btn" class="thai-warning-close" title="ปิดการแจ้งเตือน">&times;</button>
+    </div>
+
+    <!-- Live Typing Box -->
+    <section class="typing-box" id="typing-box">
+      <div id="ghost-status-badge" class="ghost-status-badge" style="display: none;"></div>
+      <input type="text" id="hidden-input" class="hidden-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+      <div class="typing-text" id="typing-text">
+        <!-- Characters injected by JS -->
+      </div>
+    </section>
+
+    <!-- Real-time Key & Finger Guidance Bar -->
+    <section class="finger-guide-bar">
+      <div class="guide-left">
+        <div class="next-key-preview" id="next-key-preview">F</div>
+        <div class="finger-instruction">
+          <div class="finger-name" id="finger-name">
+            <span class="finger-dot" id="finger-dot" style="background-color: var(--accent-cyan);"></span>
+            <span>นิ้วชี้ซ้าย (Left Index)</span>
+          </div>
+          <div class="finger-tip" id="finger-tip">วางนิ้วบนตุ่มนูน F แล้วมองจอเพื่อสร้างความจำกล้ามเนื้อ</div>
+        </div>
+      </div>
+      <div style="display: flex; gap: 0.5rem; align-items: center;">
+        <button id="restart-btn" class="action-btn" title="เริ่มบทเรียนใหม่ทันที (สร้างโจทย์ใหม่)">
+          <span>🔄</span> เริ่มใหม่ (Tab)
+        </button>
+        <button id="restart-same-btn" class="action-btn" title="ซ้ำข้อความเดิมที่เพิ่งพิมพ์ (Shift+Tab)" style="font-size: 0.8rem; padding: 0.45rem 0.75rem;">
+          <span>🔁</span> ซ้ำข้อความเดิม (Shift+Tab)
+        </button>
+      </div>
+    </section>
+
+    <!-- Visual Hands Diagram (Left Hand & Right Hand) -->
+    <section class="hands-container" id="hands-container">
+      <!-- Left Hand -->
+      <div style="text-align: center;">
+        <svg class="hand-svg" viewBox="0 0 160 150">
+          <!-- Palm -->
+          <path class="hand-palm" d="M 35 75 Q 30 115 50 140 Q 95 145 130 130 Q 140 100 135 75 Z" />
+          <!-- Left Pinky (LP) -->
+          <rect class="finger-path" data-finger-id="LP" x="18" y="42" width="18" height="52" rx="9" />
+          <text class="finger-label-text" x="27" y="34" text-anchor="middle">ก้อย</text>
+          <!-- Left Ring (LR) -->
+          <rect class="finger-path" data-finger-id="LR" x="42" y="22" width="18" height="68" rx="9" />
+          <text class="finger-label-text" x="51" y="15" text-anchor="middle">นาง</text>
+          <!-- Left Middle (LM) -->
+          <rect class="finger-path" data-finger-id="LM" x="66" y="10" width="19" height="78" rx="9.5" />
+          <text class="finger-label-text" x="75" y="6" text-anchor="middle">กลาง</text>
+          <!-- Left Index (LI) -->
+          <rect class="finger-path" data-finger-id="LI" x="91" y="24" width="19" height="68" rx="9.5" />
+          <text class="finger-label-text" x="100" y="17" text-anchor="middle">ชี้</text>
+          <!-- Left Thumb (LT) -->
+          <rect class="finger-path" data-finger-id="LT" x="118" y="70" width="19" height="48" rx="9.5" transform="rotate(32 127 94)" />
+          <text class="finger-label-text" x="145" y="70" text-anchor="middle">โป้ง</text>
+        </svg>
+        <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin-top: 4px;">มือซ้าย (Left Hand)</div>
+      </div>
+
+      <!-- Right Hand -->
+      <div style="text-align: center;">
+        <svg class="hand-svg" viewBox="0 0 160 150">
+          <!-- Palm -->
+          <path class="hand-palm" d="M 25 75 Q 20 100 30 130 Q 65 145 110 140 Q 130 115 125 75 Z" />
+          <!-- Right Thumb (RT) -->
+          <rect class="finger-path" data-finger-id="RT" x="23" y="70" width="19" height="48" rx="9.5" transform="rotate(-32 33 94)" />
+          <text class="finger-label-text" x="15" y="70" text-anchor="middle">โป้ง</text>
+          <!-- Right Index (RI) -->
+          <rect class="finger-path" data-finger-id="RI" x="50" y="24" width="19" height="68" rx="9.5" />
+          <text class="finger-label-text" x="60" y="17" text-anchor="middle">ชี้</text>
+          <!-- Right Middle (RM) -->
+          <rect class="finger-path" data-finger-id="RM" x="75" y="10" width="19" height="78" rx="9.5" />
+          <text class="finger-label-text" x="85" y="6" text-anchor="middle">กลาง</text>
+          <!-- Right Ring (RR) -->
+          <rect class="finger-path" data-finger-id="RR" x="100" y="22" width="18" height="68" rx="9" />
+          <text class="finger-label-text" x="109" y="15" text-anchor="middle">นาง</text>
+          <!-- Right Pinky (RP) -->
+          <rect class="finger-path" data-finger-id="RP" x="124" y="42" width="18" height="52" rx="9" />
+          <text class="finger-label-text" x="133" y="34" text-anchor="middle">ก้อย</text>
+        </svg>
+        <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin-top: 4px;">มือขวา (Right Hand)</div>
+      </div>
+    </section>
+
+    <!-- Virtual Interactive Keyboard -->
+    <section class="keyboard-wrapper">
+      <div id="keyboard-container">
+        <!-- Generated dynamically by keyboard.js -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Modals Container -->
+
+  <!-- 1. Course Levels Modal -->
+  <div class="modal-overlay" id="course-modal">
+    <div class="modal-card" style="max-width: 820px;">
+      <div class="modal-header">
+        <h3 class="modal-title"><span>📚</span> เส้นทางหลักสูตรฝึกพิมพ์ 6 ระดับ</h3>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      <div id="course-levels-container">
+        <!-- Injected by app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Test Result Modal -->
+  <div class="modal-overlay" id="result-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title"><span>📊</span> สรุปผลการพิมพ์</h3>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      
+      <div class="result-status-badge">
+        <div class="badge-icon" id="result-status-icon">🎉</div>
+        <div class="result-status-title" id="result-status-title">ยอดเยี่ยม! ผ่านด่านแล้ว</div>
+        <div class="result-stars" id="result-stars">★★★</div>
+      </div>
+
+      <div class="result-grid">
+        <div class="result-stat-box">
+          <div class="val" id="result-wpm" style="color: var(--accent-cyan)">0</div>
+          <div class="lbl">WPM ความเร็ว</div>
+        </div>
+        <div class="result-stat-box">
+          <div class="val" id="result-acc" style="color: var(--accent-green)">0%</div>
+          <div class="lbl">ความแม่นยำ</div>
+        </div>
+        <div class="result-stat-box">
+          <div class="val" id="result-errors" style="color: var(--accent-red)">0</div>
+          <div class="lbl">จุดที่พิมพ์ผิด</div>
+        </div>
+      </div>
+
+      <div class="weak-keys-alert" id="result-weak-keys-box" style="display: none;">
+        <h4><span>⚠️</span> ปุ่มที่คุณพิมพ์ผิดในรอบนี้:</h4>
+        <div class="weak-key-tags" id="result-weak-key-tags"></div>
+      </div>
+
+      <!-- Phase 2: Drill Targeted Keys Before/After Comparison -->
+      <div id="result-drill-comparison" class="drill-comparison-box" style="display: none; background: rgba(56, 189, 248, 0.08); border: 1px solid var(--accent-cyan); border-radius: var(--radius-md); padding: 0.85rem; margin-bottom: 1rem;">
+        <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--accent-cyan); margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.4rem;">
+          <span>🎯</span> พัฒนาการของปุ่มเป้าหมายในรอบนี้ (Before vs After):
+        </h4>
+        <div id="result-drill-comparison-list" style="display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.85rem;"></div>
+      </div>
+
+      <!-- Phase 3.2: Level Gating Failure Criteria & Practice Drill Offer -->
+      <div id="result-fail-box" class="result-fail-box" style="display: none;">
+        <div class="result-fail-title">
+          <span>❌</span> สาเหตุที่ยังไม่ผ่านเกณฑ์:
+        </div>
+        <div id="result-fail-list" class="result-fail-list"></div>
+        <button id="result-fail-practice-btn" class="result-fail-practice-btn">
+          <span>🎯</span> ซ้อมเจาะจงเฉพาะปุ่มที่ยังไม่ผ่านเกณฑ์
+        </button>
+      </div>
+
+      <!-- Phase 3.3: Suggest No-Peek after Level 1 passed -->
+      <div id="result-no-peek-box" class="result-no-peek-prompt" style="display: none;">
+        <div>
+          <div style="font-weight: 700; color: var(--accent-cyan); font-size: 0.9rem;">🙈 แนะนำ: เปิดโหมดห้ามมองแป้น (No-Peek Mode)</div>
+          <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 2px;">คุณผ่าน Level 1 วางนิ้วหลักแล้ว ลองซ่อนคีย์บอร์ดบนจอเพื่อฝึกสัมผัสเต็มรูปแบบ!</div>
+        </div>
+        <button id="result-enable-no-peek-btn" class="action-btn btn-accent" style="white-space: nowrap; font-size: 0.8rem; padding: 0.4rem 0.8rem;">
+          เปิด No-Peek ทันที
+        </button>
+      </div>
+
+      <!-- Phase 5.1: What to work on next suggestions box -->
+      <div id="result-suggestions-box" class="result-suggestions-box" style="display: none; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 0.85rem; margin-bottom: 1rem; text-align: left;">
+        <div style="font-weight: 700; font-size: 0.88rem; color: var(--text-primary); margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.4rem;">
+          <span>💡</span> สิ่งที่ควรโฟกัสในรอบถัดไป (What to work on next):
+        </div>
+        <div id="result-suggestions-list" style="display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.83rem;"></div>
+      </div>
+
+      <div class="modal-actions">
+        <button id="result-drill-btn" class="action-btn" title="สร้างแบบฝึกเจาะจงเฉพาะปุ่มที่เพิ่งพลาดในรอบนี้">
+          <span>⚡</span> ซ้อมจุดที่เพิ่งสะดุดรอบนี้ทันที
+        </button>
+        <button id="result-adaptive-next-btn" class="action-btn" style="border-color: var(--accent-cyan); color: var(--accent-cyan); background: rgba(56, 189, 248, 0.12);" title="ฝึกบทนี้อีกรอบโดยนำจุดอ่อนที่สะดุดมาเสริมตอนต้น">
+          <span>🎯</span> ฝึกบทนี้อีกรอบ (เสริมจุดอ่อน)
+        </button>
+        <button id="result-retry-btn" class="action-btn">
+          <span>🔄</span> ฝึกซ้ำอีกครั้ง
+        </button>
+        <button id="result-next-btn" class="action-btn btn-accent">
+          <span>🚀</span> ลุยด่านถัดไป!
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Overall Stats & Progress Modal -->
+  <div class="modal-overlay" id="stats-modal">
+    <div class="modal-card" style="max-width: 760px;">
+      <div class="modal-header">
+        <h3 class="modal-title"><span>📈</span> ประวัติสถิติและกราฟพัฒนาการ</h3>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+
+      <div class="result-grid" style="margin-bottom: 1rem;">
+        <div class="result-stat-box">
+          <div class="val" id="stat-total-tests">0</div>
+          <div class="lbl">จำนวนครั้งที่ฝึก</div>
+        </div>
+        <div class="result-stat-box">
+          <div class="val" id="stat-best-wpm" style="color: var(--accent-cyan)">0</div>
+          <div class="lbl">สปีดสูงสุด (WPM)</div>
+        </div>
+        <div class="result-stat-box">
+          <div class="val" id="stat-avg-acc" style="color: var(--accent-green)">100%</div>
+          <div class="lbl">ความแม่นยำเฉลี่ย</div>
+        </div>
+      </div>
+
+      <!-- Canvas Progress Line Chart -->
+      <div class="chart-container">
+        <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.5rem;">
+          กราฟแนวโน้มความเร็ว (WPM) และความแม่นยำ (Acc %) ตลอดเวลาที่ผ่านมา:
+        </div>
+        <canvas id="chart-canvas" class="chart-canvas"></canvas>
+        <div id="chart-tooltip" class="chart-tooltip"></div>
+      </div>
+
+      <!-- Phase 2: Weakness Engine Keyboard Heatmap Section -->
+      <div class="stats-heatmap-section" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem; flex-wrap: wrap; gap: 0.5rem;">
+          <h4 style="font-size: 1rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 0.4rem; margin: 0;">
+            <span>🔥</span> แผนผังจุดอ่อนบนคีย์บอร์ด (Keyboard Heatmap)
+          </h4>
+          <div class="heatmap-legend" style="display: flex; align-items: center; gap: 0.75rem; font-size: 0.75rem; color: var(--text-secondary);">
+            <span style="display: flex; align-items: center; gap: 0.25rem;"><span style="display:inline-block;width:10px;height:10px;background:#4ade80;border-radius:2px;"></span> แม่นยำ</span>
+            <span style="display: flex; align-items: center; gap: 0.25rem;"><span style="display:inline-block;width:10px;height:10px;background:#facc15;border-radius:2px;"></span> ปานกลาง</span>
+            <span style="display: flex; align-items: center; gap: 0.25rem;"><span style="display:inline-block;width:10px;height:10px;background:#f43f5e;border-radius:2px;"></span> จุดอ่อนสูง</span>
+            <span style="display: flex; align-items: center; gap: 0.25rem;"><span style="display:inline-block;width:10px;height:10px;background:rgba(148,163,184,0.3);border-radius:2px;"></span> ข้อมูลยังไม่พอ</span>
+          </div>
+        </div>
+
+        <div id="heatmap-container" class="heatmap-container">
+          <!-- Rendered by renderHeatmap in keyboard.js -->
+        </div>
+
+        <div id="heatmap-key-detail" class="heatmap-key-detail" style="font-size: 0.82rem; color: var(--text-secondary); text-align: center; margin-top: 0.5rem; min-height: 1.2rem;">
+          ชี้หรือแตะที่แป้นพิมพ์เพื่อดูสถิติอัตราผิดพลาดและความเร็วรายปุ่ม
+        </div>
+
+        <!-- Detailed Breakdown Cards -->
+        <div id="heatmap-analytics-breakdown" class="heatmap-analytics-breakdown" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem; margin-top: 1rem;">
+          <!-- Top Weak Keys -->
+          <div class="analytics-sub-card">
+            <div class="analytics-sub-title"><span>🎯</span> ปุ่มจุดอ่อนสูงสุด (Top Weak)</div>
+            <div id="analytics-top-weak-keys" class="analytics-sub-content"></div>
+          </div>
+          <!-- Most Common Mix-ups -->
+          <div class="analytics-sub-card">
+            <div class="analytics-sub-title"><span>🔀</span> คู่สับสนบ่อย (Mix-ups)</div>
+            <div id="analytics-top-confusions" class="analytics-sub-content"></div>
+          </div>
+          <!-- Weak Bigrams -->
+          <div class="analytics-sub-card">
+            <div class="analytics-sub-title"><span>🔗</span> คู่ตัวอักษรที่สะดุด (Bigrams)</div>
+            <div id="analytics-top-bigrams" class="analytics-sub-content"></div>
+          </div>
+        </div>
+
+        <!-- Empty state when not enough data -->
+        <div id="heatmap-empty-state" class="heatmap-empty-state" style="display: none; text-align: center; padding: 1.5rem; color: var(--text-secondary);">
+          <div style="font-size: 2.2rem; margin-bottom: 0.4rem;">🌱</div>
+          <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem;">ยังไม่มีข้อมูลวิเคราะห์เพียงพอ</div>
+          <p style="font-size: 0.85rem; margin: 0;">กรุณาฝึกพิมพ์สัก 1–2 บทเรียน (พิมพ์อย่างน้อย 15 ครั้งต่อปุ่ม) เพื่อให้ระบบเริ่มประมวลผล Heatmap และจุดอ่อนให้คุณ</p>
+        </div>
+      </div>
+
+      <!-- Phase 4.3: Daily Practice Minutes & Current Streak Card -->
+      <div id="stats-daily-goal-section" style="margin-bottom: 1rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1rem;">
+        <!-- Injected dynamically by renderDailyGoalCard -->
+      </div>
+
+      <!-- Phase 4.3: Per-Level Progress Breakdown (Levels 1 to 6) -->
+      <div class="stats-level-progress-section" style="margin-bottom: 1rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.25rem;">
+        <h4 style="font-size: 1rem; font-weight: 700; color: var(--text-primary); margin: 0 0 0.5rem 0; display: flex; align-items: center; gap: 0.4rem;">
+          <span>🏆</span> ความก้าวหน้าในแต่ละเลเวล (Per-Level Progress)
+        </h4>
+        <div id="stats-level-progress-container">
+          <!-- Injected dynamically by renderPerLevelProgress -->
+        </div>
+      </div>
+
+      <div class="modal-actions" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+        <div style="display: flex; gap: 0.5rem; align-items: center;">
+          <button id="export-progress-btn" class="action-btn" title="ดาวน์โหลดไฟล์ JSON สำรองข้อมูลความก้าวหน้าทั้งหมด">
+            <span>📤</span> ส่งออกข้อมูล (Export)
+          </button>
+          <button id="import-progress-btn" class="action-btn" title="นำเข้าข้อมูลจากไฟล์ JSON ที่เคยสำรองไว้">
+            <span>📥</span> นำเข้าข้อมูล (Import)
+          </button>
+          <input type="file" id="import-file-input" accept=".json" style="display: none;" />
+        </div>
+        <button class="action-btn" onclick="document.getElementById('stats-modal').classList.remove('active')">ปิด</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phase 4.4: Free Mode Custom Text Paste Modal -->
+  <div class="modal-overlay" id="custom-paste-modal">
+    <div class="modal-card" style="max-width: 620px;">
+      <div class="modal-header">
+        <h3 class="modal-title"><span>📋</span> ฝึกพิมพ์ข้อความของคุณเอง (Custom Text)</h3>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      <div style="margin-bottom: 1rem;">
+        <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0 0 0.5rem 0;">
+          วางข้อความภาษาอังกฤษที่คุณต้องการฝึกพิมพ์ (จำกัดสูงสุด 2,000 ตัวอักษร ระบบจะตัดอักขระพิเศษที่ไม่รองรับออกโดยอัตโนมัติ):
+        </p>
+        <textarea id="custom-paste-textarea" class="custom-paste-textarea" rows="6" placeholder="วางข้อความที่ต้องการฝึกพิมพ์ที่นี่..."></textarea>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.4rem; font-size: 0.8rem; color: var(--text-muted);">
+          <span id="custom-paste-warning" style="color: var(--accent-orange); font-weight: 600; display: none;"></span>
+          <span style="margin-left: auto;"><span id="custom-paste-char-count">0</span> / 2000 ตัวอักษร</span>
+        </div>
+      </div>
+      <div class="modal-actions" style="display: flex; justify-content: flex-end; gap: 0.5rem;">
+        <button class="action-btn" onclick="document.getElementById('custom-paste-modal').classList.remove('active')">ยกเลิก</button>
+        <button id="apply-custom-paste-btn" class="action-btn" style="background: var(--accent-blue); color: #ffffff; border-color: var(--accent-blue);">
+          <span>🚀</span> เริ่มฝึกพิมพ์ข้อความนี้
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Placement Test Modal -->
+  <div class="modal-overlay" id="placement-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title"><span>🎯</span> ระบบวัดระดับการพิมพ์ (Placement Test)</h3>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      <div id="placement-results-content">
+        <!-- Injected dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Phase 5.3: Keyboard Shortcuts Help Modal -->
+  <div class="modal-overlay" id="shortcuts-modal">
+    <div class="modal-card" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3 class="modal-title"><span>⌨️</span> แป้นพิมพ์ลัด (Keyboard Shortcuts)</h3>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 0.65rem; margin-bottom: 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 0.6rem 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+          <span style="font-size: 0.88rem; color: var(--text-primary);">พักการพิมพ์ / เปิดเมนู</span>
+          <kbd style="background: var(--bg-secondary); padding: 0.2rem 0.5rem; border-radius: 4px; border: 1px solid var(--border-color); font-family: var(--font-mono); font-weight: bold; color: var(--accent-cyan);">Esc</kbd>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 0.6rem 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+          <span style="font-size: 0.88rem; color: var(--text-primary);">เริ่มบทเรียนใหม่ทันที (สร้างโจทย์ใหม่)</span>
+          <kbd style="background: var(--bg-secondary); padding: 0.2rem 0.5rem; border-radius: 4px; border: 1px solid var(--border-color); font-family: var(--font-mono); font-weight: bold; color: var(--accent-cyan);">Tab</kbd>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 0.6rem 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+          <span style="font-size: 0.88rem; color: var(--text-primary);">ซ้ำข้อความเดิม (Retry Same Text)</span>
+          <kbd style="background: var(--bg-secondary); padding: 0.2rem 0.5rem; border-radius: 4px; border: 1px solid var(--border-color); font-family: var(--font-mono); font-weight: bold; color: var(--accent-cyan);">Shift + Tab</kbd>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 0.6rem 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+          <span style="font-size: 0.88rem; color: var(--text-primary);">ไปด่านถัดไป / ฝึกซ้ำ (ในหน้าผลลัพธ์)</span>
+          <kbd style="background: var(--bg-secondary); padding: 0.2rem 0.5rem; border-radius: 4px; border: 1px solid var(--border-color); font-family: var(--font-mono); font-weight: bold; color: var(--accent-cyan);">Enter</kbd>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 0.6rem 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+          <span style="font-size: 0.88rem; color: var(--text-primary);">เปิดหน้าต่างคีย์ลัดนี้</span>
+          <kbd style="background: var(--bg-secondary); padding: 0.2rem 0.5rem; border-radius: 4px; border: 1px solid var(--border-color); font-family: var(--font-mono); font-weight: bold; color: var(--accent-cyan);">?</kbd>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="action-btn" onclick="document.getElementById('shortcuts-modal').classList.remove('active')">เข้าใจแล้ว</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phase 5.3: Pause Modal (triggered by Esc) -->
+  <div class="modal-overlay" id="pause-modal">
+    <div class="modal-card" style="max-width: 440px; text-align: center;">
+      <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">⏸️</div>
+      <h3 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 0.4rem; color: var(--text-primary);">หยุดพักชั่วคราว (Paused)</h3>
+      <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem;">
+        ผ่อนคลายกล้ามเนื้อมือและข้อมือ กด <strong>Esc</strong> หรือคลิกด้านล่างเพื่อพิมพ์ต่อ
+      </p>
+      <div class="modal-actions" style="justify-content: center; gap: 0.6rem; flex-wrap: wrap;">
+        <button id="pause-resume-btn" class="action-btn btn-accent" style="padding: 0.55rem 1.1rem;">
+          <span>▶️</span> ฝึกพิมพ์ต่อ (Esc)
+        </button>
+        <button id="pause-restart-btn" class="action-btn" style="padding: 0.55rem 1.1rem;">
+          <span>🔄</span> เริ่มใหม่ (Tab)
+        </button>
+        <button id="pause-restart-same-btn" class="action-btn" style="padding: 0.55rem 1.1rem;">
+          <span>🔁</span> ซ้ำข้อความเดิม (Shift+Tab)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <p>Typeeveryday — ออกแบบเพื่อพัฒนาทักษะการพิมพ์สัมผัสและเขียนโค้ดตั้งแต่ศูนย์สู่โปรแกรมเมอร์มืออาชีพ</p>
+    <p style="font-size: 0.8rem; opacity: 0.75; margin-top: 0.35rem;">ข้อมูลถูกเก็บในเบราว์เซอร์ของคุณเท่านั้น ใช้ Export เพื่อสำรอง</p>
+  </footer>
+
+  <script type="module" src="js/app.js?v=4.5"></script>
+</body>
+</html>
