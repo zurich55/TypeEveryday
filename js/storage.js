@@ -1,5 +1,5 @@
 // Storage & State Persistence Manager using LocalStorage
-import { createEmptyStats, updateStatsFromLog } from './analytics.js?v=4.0';
+import { createEmptyStats, updateStatsFromLog } from './analytics.js?v=5.0';
 
 export const CURRENT_SCHEMA_VERSION = 1;
 
@@ -71,7 +71,121 @@ export class StorageManager {
     }
   }
 
+  /**
+   * Migrates Level 2 progress from the old 5-lesson structure to the new 11-lesson format.
+   * Level 1 and Level 3+ data remain 100% intact.
+   * Old completed Level 2 lessons map sensibly with best WPM and stars preserved.
+   */
+  static migrateLevel2Progress(options = {}) {
+    try {
+      const MIGRATION_KEY = 'tm_level2_restructured_v2';
+      if (!options.force && localStorage.getItem(MIGRATION_KEY)) {
+        return false;
+      }
+
+      const unlocked = this.safeGetJSON(STORAGE_KEYS.UNLOCKED, ['1-1']);
+      const scores = this.safeGetJSON(STORAGE_KEYS.SCORES, {});
+
+      const oldScores = { ...scores };
+      // Preserve non-Level 2 scores (Level 1, Level 3+) untouched
+      const newScores = {};
+      for (const [id, s] of Object.entries(scores)) {
+        if (!/^2-/.test(id)) {
+          newScores[id] = s;
+        }
+      }
+      let scoresChanged = false;
+
+      // Mapping old Level 2 lessons to new ones:
+      // Old 2-1 -> New 2-1, 2-2
+      if (oldScores['2-1']) {
+        newScores['2-1'] = { ...oldScores['2-1'] };
+        newScores['2-2'] = { ...oldScores['2-1'] };
+        scoresChanged = true;
+      }
+      // Old 2-2 -> New 2-3, 2-4, 2-5
+      if (oldScores['2-2']) {
+        newScores['2-3'] = { ...oldScores['2-2'] };
+        newScores['2-4'] = { ...oldScores['2-2'] };
+        newScores['2-5'] = { ...oldScores['2-2'] };
+        scoresChanged = true;
+      }
+      // Old 2-3 -> New 2-6, 2-7
+      if (oldScores['2-3']) {
+        newScores['2-6'] = { ...oldScores['2-3'] };
+        newScores['2-7'] = { ...oldScores['2-3'] };
+        scoresChanged = true;
+      }
+      // Old 2-4 -> New 2-8, 2-9, 2-10
+      if (oldScores['2-4']) {
+        newScores['2-8'] = { ...oldScores['2-4'] };
+        newScores['2-9'] = { ...oldScores['2-4'] };
+        newScores['2-10'] = { ...oldScores['2-4'] };
+        scoresChanged = true;
+      }
+      // Old 2-5 -> New 2-11
+      if (oldScores['2-5']) {
+        newScores['2-11'] = { ...oldScores['2-5'] };
+        scoresChanged = true;
+      }
+
+      // Unlocked lessons migration: preserve non-Level 2 untouched
+      const newUnlocked = new Set();
+      unlocked.forEach(id => {
+        if (!/^2-/.test(id)) {
+          newUnlocked.add(id);
+        }
+      });
+      let unlockedChanged = false;
+
+      const hasLevel3Plus = unlocked.some(id => /^[3-6]-/.test(id));
+      const hasCompletedOld25 = Boolean(oldScores['2-5']);
+
+      if (hasLevel3Plus || hasCompletedOld25) {
+        for (let i = 1; i <= 11; i++) {
+          newUnlocked.add(`2-${i}`);
+        }
+        unlockedChanged = true;
+      } else if (unlocked.includes('2-5') || Boolean(oldScores['2-4'])) {
+        for (let i = 1; i <= 11; i++) {
+          newUnlocked.add(`2-${i}`);
+        }
+        unlockedChanged = true;
+      } else if (unlocked.includes('2-4') || Boolean(oldScores['2-3'])) {
+        for (let i = 1; i <= 8; i++) {
+          newUnlocked.add(`2-${i}`);
+        }
+        unlockedChanged = true;
+      } else if (unlocked.includes('2-3') || Boolean(oldScores['2-2'])) {
+        for (let i = 1; i <= 6; i++) {
+          newUnlocked.add(`2-${i}`);
+        }
+        unlockedChanged = true;
+      } else if (unlocked.includes('2-2') || Boolean(oldScores['2-1'])) {
+        ['2-1', '2-2', '2-3'].forEach(id => newUnlocked.add(id));
+        unlockedChanged = true;
+      } else if (unlocked.includes('2-1')) {
+        newUnlocked.add('2-1');
+        unlockedChanged = true;
+      }
+
+      if (scoresChanged) {
+        localStorage.setItem(STORAGE_KEYS.SCORES, JSON.stringify(newScores));
+      }
+      if (unlockedChanged) {
+        localStorage.setItem(STORAGE_KEYS.UNLOCKED, JSON.stringify(Array.from(newUnlocked)));
+      }
+
+      localStorage.setItem(MIGRATION_KEY, 'true');
+      return true;
+    } catch (err) {
+      console.error('[StorageManager] migrateLevel2Progress error:', err);
+      return false;
+    }
+  }
+
   static getUnlockedLessons() {
+    this.migrateLevel2Progress();
     const data = this.safeGetJSON(STORAGE_KEYS.UNLOCKED, ['1-1']);
     if (!Array.isArray(data) || data.length === 0) return ['1-1'];
     if (!data.includes('1-1')) data.unshift('1-1');
@@ -91,6 +205,7 @@ export class StorageManager {
   }
 
   static getLessonScores() {
+    this.migrateLevel2Progress();
     const data = this.safeGetJSON(STORAGE_KEYS.SCORES, {});
     return (data && typeof data === 'object' && !Array.isArray(data)) ? data : {};
   }
@@ -277,6 +392,7 @@ export class StorageManager {
   static clearCorruptionNotice() {
     try {
       localStorage.removeItem('tm_corruption_notice');
+      localStorage.removeItem('tm_level2_restructured_v2');
     } catch (e) {}
   }
 
@@ -444,6 +560,7 @@ export class StorageManager {
       localStorage.removeItem('tm_recent_mistakes');
       localStorage.removeItem('tm_last_session_mistakes');
       localStorage.removeItem('tm_corruption_notice');
+      localStorage.removeItem('tm_level2_restructured_v2');
     } catch (e) {}
   }
 }

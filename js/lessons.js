@@ -17,7 +17,20 @@ export const LEVEL_PASS_THRESHOLDS = {
   3: { wpm: 25, accuracy: 95, minKeyAccuracy: 90, minLength: 120, maxLength: 200 },
   4: { wpm: 35, accuracy: 95, minKeyAccuracy: 90, minLength: 120, maxLength: 200 },
   5: { wpm: 25, accuracy: 95, minKeyAccuracy: 90, minLength: 120, maxLength: 200 },
-  6: { wpm: 30, accuracy: 95, minKeyAccuracy: 90, minLength: 120, maxLength: 200 }
+  6: { wpm: 30, accuracy: 95, minKeyAccuracy: 90, minLength: 120, maxLength: 200 },
+
+  // Level 2 gradual thresholds: 16-20 WPM rising to 22 for final test
+  '2-1': { wpm: 16, accuracy: 95, minKeyAccuracy: 90, minLength: 80, maxLength: 120 },
+  '2-2': { wpm: 16, accuracy: 95, minKeyAccuracy: 90, minLength: 80, maxLength: 120 },
+  '2-3': { wpm: 17, accuracy: 95, minKeyAccuracy: 90, minLength: 80, maxLength: 120 },
+  '2-4': { wpm: 17, accuracy: 95, minKeyAccuracy: 90, minLength: 80, maxLength: 120 },
+  '2-5': { wpm: 18, accuracy: 95, minKeyAccuracy: 90, minLength: 80, maxLength: 120 },
+  '2-6': { wpm: 18, accuracy: 95, minKeyAccuracy: 90, minLength: 80, maxLength: 120 },
+  '2-7': { wpm: 19, accuracy: 95, minKeyAccuracy: 90, minLength: 80, maxLength: 120 },
+  '2-8': { wpm: 19, accuracy: 95, minKeyAccuracy: 90, minLength: 80, maxLength: 120 },
+  '2-9': { wpm: 20, accuracy: 95, minKeyAccuracy: 90, minLength: 80, maxLength: 120 },
+  '2-10': { wpm: 20, accuracy: 95, minKeyAccuracy: 90, minLength: 80, maxLength: 120 },
+  '2-11': { wpm: 22, accuracy: 95, minKeyAccuracy: 90, minLength: 80, maxLength: 120 }
 };
 
 export const LESSON_LEVELS = [
@@ -87,42 +100,90 @@ export const LESSON_LEVELS = [
     lessons: [
       {
         id: '2-1',
-        title: '2.1 แถวบน: E, I, R, U (นิ้วกลางและนิ้วชี้)',
-        targetWpm: 18,
+        title: '2.1 แถวบน: E และ I (นิ้วกลางซ้าย-ขวา)',
+        targetWpm: 16,
         minAccuracy: 95,
-        tips: 'D ขยับขึ้นไป E, K ขยับขึ้นไป I, F ขยับขึ้นไป R, J ขยับขึ้นไป U เมื่อกดแล้วดึงนิ้วกลับ',
-        text: 'e i r u red fir rue ire user fire free ride risk true sure tree tire rust suit duel fruit cure feud'
+        tips: 'D ขยับขึ้นไป E (นิ้วกลางซ้าย), K ขยับขึ้นไป I (นิ้วกลางขวา) ขยับขึ้นแล้วดึงกลับจุด Anchor',
+        text: 'die lie file like sail side hide life desk fail safe dial leak fish shed kid seal feed'
       },
       {
         id: '2-2',
-        title: '2.2 แถวบน: T, Y, W, O, Q, P (ครบทุกนิ้วแถวบน)',
-        targetWpm: 20,
+        title: '2.2 แถวบน: R และ U (นิ้วชี้ซ้าย-ขวา)',
+        targetWpm: 16,
         minAccuracy: 95,
-        tips: 'A ขึ้นไป Q, S ขึ้นไป W, ; ขึ้นไป P, L ขึ้นไป O, F เอื้อมไป T, J เอื้อมไป Y',
-        text: 'quiet power write yesterday loop try you port reply quote root type wire tour wear rest pure quest'
+        tips: 'F ขยับขึ้นไป R (นิ้วชี้ซ้าย), J ขยับขึ้นไป U (นิ้วชี้ขวา) ใช้นิ้วชี้เอื้อมตรงขึ้นแถวบน',
+        text: 'red fir rue ire user fire free ride risk sure rule rush rude duel feud fur surf dear hear hair dark hard'
       },
       {
         id: '2-3',
-        title: '2.3 แถวล่าง: V, M, C, Comma (นิ้วชี้และนิ้วกลาง)',
-        targetWpm: 20,
+        title: '2.3 แถวบน: T และ Y (นิ้วชี้เอื้อมใน)',
+        targetWpm: 17,
         minAccuracy: 95,
-        tips: 'F ลงมา V, J ลงมา M, D ลงมา C, K ลงมาเครื่องหมายจุลภาค (,)',
-        text: 'v m c , come move time cave calm music voice cover farm claim value civil charm movie clean carve'
+        tips: 'F เอื้อมขึ้นในไป T (นิ้วชี้ซ้าย), J เอื้อมขึ้นในไป Y (นิ้วชี้ขวา) เอื้อมแล้วดึงกลับจุดพัก',
+        text: 'stay star easy duty fast tree late tell rate tail tray dry yeast trust trait treat test rest'
       },
       {
         id: '2-4',
-        title: '2.4 แถวล่าง: B, N, X, Dot, Z, Slash',
-        targetWpm: 22,
+        title: '2.4 แถวบน: W และ O (นิ้วนางซ้าย-ขวา)',
+        targetWpm: 17,
         minAccuracy: 95,
-        tips: 'F เอื้อมลง B, J เอื้อมลง N, S ลง X, A ลง Z, L ลง Dot (.), ; ลง Slash (/)',
-        text: 'box next zero zebra blast buzz view zone text web fix size run. scan norm bold park quit dark zoom'
+        tips: 'S ขยับขึ้นไป W (นิ้วนางซ้าย), L ขยับขึ้นไป O (นิ้วนางขวา) ฝึกการควบคุมนิ้วนางให้เป็นอิสระ',
+        text: 'two out how word show work flow slow wood look foot root tool wait wolf soft door hook took'
       },
       {
         id: '2-5',
-        title: '2.5 ทดสอบผ่านระดับ All Letters Integration',
-        targetWpm: 24,
+        title: '2.5 แถวบน: Q และ P (นิ้วก้อยซ้าย-ขวา)',
+        targetWpm: 18,
         minAccuracy: 95,
-        tips: 'ประโยคภาษาอังกฤษที่มีตัวอักษร A-Z ครบทุกตัว เพื่อทดสอบความจำกล้ามเนื้อทั้งสองมือ',
+        tips: 'A ขยับขึ้นไป Q (นิ้วก้อยซ้าย), ; ขยับขึ้นไป P (นิ้วก้อยขวา) ปลดล็อกครบทุกปุ่มแถวบน QWERTY',
+        text: 'quit quiet play post hope keep deep path drop equip quote pool part pure spot step stop poor page pipe'
+      },
+      {
+        id: '2-6',
+        title: '2.6 แถวล่าง: V และ M (นิ้วชี้ลงล่าง)',
+        targetWpm: 18,
+        minAccuracy: 95,
+        tips: 'F ขยับลงมา V (นิ้วชี้ซ้าย), J ขยับลงมา M (นิ้วชี้ขวา) เริ่มต้นแถวล่างด้วยนิ้วชี้ที่คล่องแคล่ว',
+        text: 'move view time home game swim team give live five save warm farm wave movie make same have more'
+      },
+      {
+        id: '2-7',
+        title: '2.7 แถวล่าง: C และ Comma (นิ้วกลางลงล่าง)',
+        targetWpm: 19,
+        minAccuracy: 95,
+        tips: 'D ขยับลงมา C (นิ้วกลางซ้าย), K ขยับลงมา Comma (,) (นิ้วกลางขวา)',
+        text: 'come, cake, cold, cool, face, fact, city, code, case, card, care, deck, rock, calm, much, rich'
+      },
+      {
+        id: '2-8',
+        title: '2.8 แถวล่าง: B และ N (นิ้วชี้เอื้อมลงใน)',
+        targetWpm: 19,
+        minAccuracy: 95,
+        tips: 'F เอื้อมลงในไป B (นิ้วชี้ซ้าย), J เอื้อมลงในไป N (นิ้วชี้ขวา)',
+        text: 'book best back baby boat bank rain wind open line plan hand town born bond bent burn bone nine'
+      },
+      {
+        id: '2-9',
+        title: '2.9 แถวล่าง: X และ Dot (นิ้วนางลงล่าง)',
+        targetWpm: 20,
+        minAccuracy: 95,
+        tips: 'S ขยับลงมา X (นิ้วนางซ้าย), L ขยับลงมา Dot (.) (นิ้วนางขวา)',
+        text: 'next text exam fix mix box six taxi. run. walk. keep. help. play. good. open. plan. calm. time.'
+      },
+      {
+        id: '2-10',
+        title: '2.10 แถวล่าง: Z และ Slash (นิ้วก้อยลงล่าง)',
+        targetWpm: 20,
+        minAccuracy: 95,
+        tips: 'A ขยับลงมา Z (นิ้วก้อยซ้าย), ; ขยับลงมา Slash (/) (นิ้วก้อยขวา) ปลดล็อกครบทุกปุ่มแถวล่าง',
+        text: 'zero zone size lazy zoom maze buzz quiz prize jazz in/out on/off up/down day/night true/false'
+      },
+      {
+        id: '2-11',
+        title: '2.11 ทดสอบผ่านระดับ All Letters Integration',
+        targetWpm: 22,
+        minAccuracy: 95,
+        tips: 'บททดสอบจบเลเวล 2: ประโยคภาษาอังกฤษที่มีตัวอักษร A-Z ครบทุกตัว เพื่อทดสอบความจำกล้ามเนื้อทั้งสองมือ',
         text: 'the quick brown fox jumps over the lazy dog. pack my box with five dozen liquor jugs.'
       }
     ]
@@ -310,11 +371,17 @@ export const LESSON_TARGET_KEYS = {
   '1-4': ['a', ';'],
   '1-5': ['g', 'h'],
   '1-6': ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';'],
-  '2-1': ['e', 'i', 'r', 'u'],
-  '2-2': ['t', 'y', 'w', 'o', 'q', 'p'],
-  '2-3': ['v', 'm', 'c', ','],
-  '2-4': ['b', 'n', 'x', '.', 'z', '/'],
-  '2-5': ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'],
+  '2-1': ['e', 'i'],
+  '2-2': ['r', 'u'],
+  '2-3': ['t', 'y'],
+  '2-4': ['w', 'o'],
+  '2-5': ['q', 'p'],
+  '2-6': ['v', 'm'],
+  '2-7': ['c', ','],
+  '2-8': ['b', 'n'],
+  '2-9': ['x', '.'],
+  '2-10': ['z', '/'],
+  '2-11': ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'],
   '3-1': ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'],
   '3-2': ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
   '3-3': ['?', '!', '-', '"', "'"],
@@ -340,7 +407,7 @@ export const LESSON_TARGET_KEYS = {
 export function getLessonUnlockedKeys(lessonId) {
   const allLessonIds = [
     '1-1', '1-2', '1-3', '1-4', '1-5', '1-6',
-    '2-1', '2-2', '2-3', '2-4', '2-5',
+    '2-1', '2-2', '2-3', '2-4', '2-5', '2-6', '2-7', '2-8', '2-9', '2-10', '2-11',
     '3-1', '3-2', '3-3', '3-4',
     '4-1', '4-2', '4-3', '4-4',
     '5-1', '5-2', '5-3', '5-4',

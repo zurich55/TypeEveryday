@@ -1,14 +1,14 @@
 // Main Application Controller & Typing Engine
 
-import { KEYBOARD_LAYOUT, FINGERS, getKeyInfoForChar, renderKeyboard, renderHeatmap } from './keyboard.js?v=4.5';
-import { LESSON_LEVELS, PLACEMENT_TEST_TEXT, LEVEL_PASS_THRESHOLDS, LESSON_TARGET_KEYS, getLessonUnlockedKeys, LESSON_LENGTH_CAPS } from './lessons.js?v=4.5';
-import { StorageManager } from './storage.js?v=4.5';
-import { sound } from './audio.js?v=4.5';
-import { ProgressChart, renderPerLevelProgress, renderDailyGoalCard } from './chart.js?v=4.5';
-import { DrillGenerator, generateAdaptiveLessonText } from './drill-generator.js?v=4.5';
-import { CODE_LANGUAGES } from './code-snippets.js?v=4.5';
-import { sessionLogger } from './session-log.js?v=4.5';
-import { computeWeaknessScores, getTopWeakKeys, getTopConfusions, getTopBigrams } from './analytics.js?v=4.5';
+import { KEYBOARD_LAYOUT, FINGERS, getKeyInfoForChar, renderKeyboard, renderHeatmap } from './keyboard.js?v=5.0';
+import { LESSON_LEVELS, PLACEMENT_TEST_TEXT, LEVEL_PASS_THRESHOLDS, LESSON_TARGET_KEYS, getLessonUnlockedKeys, LESSON_LENGTH_CAPS } from './lessons.js?v=5.0';
+import { StorageManager } from './storage.js?v=5.0';
+import { sound } from './audio.js?v=5.0';
+import { ProgressChart, renderPerLevelProgress, renderDailyGoalCard } from './chart.js?v=5.0';
+import { DrillGenerator, generateAdaptiveLessonText } from './drill-generator.js?v=5.0';
+import { CODE_LANGUAGES } from './code-snippets.js?v=5.0';
+import { sessionLogger } from './session-log.js?v=5.0';
+import { computeWeaknessScores, getTopWeakKeys, getTopConfusions, getTopBigrams } from './analytics.js?v=5.0';
 
 class TypeMasterApp {
   constructor() {
@@ -1613,10 +1613,18 @@ class TypeMasterApp {
       const match = String(this.currentLesson.id).match(/^([1-6])/);
       if (match) currentLevelNum = parseInt(match[1], 10);
     }
-    const threshold = LEVEL_PASS_THRESHOLDS[currentLevelNum] || {
-      wpm: this.currentLesson?.targetWpm || 15,
+    const lessonThreshold = this.currentLesson?.id ? LEVEL_PASS_THRESHOLDS[this.currentLesson.id] : null;
+    const defaultThreshold = LEVEL_PASS_THRESHOLDS[currentLevelNum] || {
+      wpm: 15,
       accuracy: 95,
       minKeyAccuracy: 90
+    };
+    const threshold = {
+      wpm: this.currentLesson?.targetWpm || lessonThreshold?.wpm || defaultThreshold.wpm,
+      accuracy: lessonThreshold?.accuracy || defaultThreshold.accuracy,
+      minKeyAccuracy: lessonThreshold?.minKeyAccuracy || defaultThreshold.minKeyAccuracy,
+      minLength: lessonThreshold?.minLength || defaultThreshold.minLength,
+      maxLength: lessonThreshold?.maxLength || defaultThreshold.maxLength
     };
 
     const isWpmPassed = finalWpm >= threshold.wpm;

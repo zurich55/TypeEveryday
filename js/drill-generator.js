@@ -1,6 +1,6 @@
 // Targeted Drill Generator for Weak Keys (ระบบสร้างแบบฝึกหัดเฉพาะจุดเพื่อแก้ปัญหาปุ่มที่พิมพ์ผิดบ่อย)
-import { StorageManager } from './storage.js?v=4.0';
-import { getTopWeakKeys, getTopConfusions, getTopBigrams } from './analytics.js?v=4.0';
+import { StorageManager } from './storage.js?v=5.0';
+import { getTopWeakKeys, getTopConfusions, getTopBigrams } from './analytics.js?v=5.0';
 
 // Tactile Home Anchor Mapping: Maps each key to its home row finger resting key
 const HOME_ANCHOR_MAP = {
@@ -23,15 +23,44 @@ const HOME_ROW_WORDS = [
 ];
 
 const TOP_ROW_WORDS = [
+  // Words using Home Row + E, I (for 2-1)
+  'die', 'lie', 'file', 'like', 'sail', 'side', 'hide', 'life', 'desk', 'fail',
+  'safe', 'dial', 'leak', 'shed', 'fish', 'silk', 'fill', 'lead', 'seal', 'idea',
+  'leaf', 'self', 'feed', 'seed', 'deed', 'heel', 'hill',
+  // Words adding R, U (for 2-2)
   'red', 'rue', 'ire', 'user', 'fire', 'free', 'ride', 'risk', 'true', 'sure',
-  'tree', 'tire', 'write', 'try', 'port', 'reply', 'root', 'type', 'fruit', 'return',
-  'quite', 'guide', 'unit', 'rate', 'tear', 'tier', 'rule', 'pure', 'cure', 'edit',
-  'power', 'quiet', 'loop', 'peer', 'trip', 'wire', 'tour', 'wear', 'rest', 'test'
+  'tree', 'tire', 'fruit', 'rule', 'rush', 'duel', 'cure', 'feud', 'fur', 'surf',
+  'dear', 'hear', 'hair', 'dark', 'hard',
+  // Words adding T, Y (for 2-3)
+  'write', 'try', 'reply', 'root', 'type', 'return', 'quite', 'guide', 'unit',
+  'rate', 'tear', 'tier', 'edit', 'stay', 'star', 'easy', 'duty', 'fast', 'late',
+  'tell', 'tail', 'tray', 'dry', 'yeast', 'trust', 'trait', 'treat', 'dirty', 'test',
+  'rest', 'year', 'yet', 'date', 'fate', 'hate', 'gate',
+  // Words adding W, O (for 2-4)
+  'power', 'loop', 'peer', 'trip', 'wire', 'tour', 'wear', 'two', 'out', 'how',
+  'word', 'show', 'work', 'flow', 'slow', 'wood', 'look', 'foot', 'tool', 'wait',
+  'wolf', 'soft', 'door', 'hook', 'took', 'blow', 'glow', 'good', 'food', 'row', 'low',
+  // Words adding Q, P (for 2-5)
+  'quiet', 'port', 'pure', 'quest', 'quit', 'open', 'play', 'post', 'hope', 'keep',
+  'deep', 'path', 'drop', 'equip', 'quote', 'pool', 'part', 'spot', 'step', 'stop',
+  'page', 'pipe'
 ];
 
 const BOTTOM_ROW_WORDS = [
-  'come', 'move', 'calm', 'cave', 'view', 'text', 'next', 'zone', 'size', 'buzz',
-  'claim', 'beam', 'mind', 'main', 'back', 'pack', 'verb', 'vote', 'navy', 'mask'
+  // Words adding V, M (for 2-6)
+  'move', 'view', 'time', 'home', 'game', 'swim', 'team', 'give', 'live', 'five',
+  'save', 'warm', 'farm', 'wave', 'movie', 'make', 'name', 'same', 'have', 'more', 'mail',
+  // Words adding C (for 2-7)
+  'come', 'calm', 'cave', 'claim', 'beam', 'cake', 'cold', 'cool', 'face', 'fact',
+  'code', 'case', 'card', 'care', 'deck', 'rock', 'call', 'much', 'rich', 'each',
+  // Words adding B, N (for 2-8)
+  'mind', 'main', 'back', 'pack', 'verb', 'navy', 'mask', 'book', 'best', 'baby',
+  'boat', 'bank', 'rain', 'wind', 'line', 'plan', 'hand', 'town', 'born', 'bond',
+  'bent', 'burn', 'bone', 'nine', 'blue', 'ball',
+  // Words adding X (for 2-9)
+  'text', 'next', 'exam', 'fix', 'mix', 'box', 'six', 'taxi', 'axis',
+  // Words adding Z (for 2-10)
+  'zone', 'size', 'buzz', 'zero', 'lazy', 'zoom', 'maze', 'quiz', 'prize', 'jazz'
 ];
 
 const GENERAL_WORDS = [
@@ -540,6 +569,33 @@ export function generateAdaptiveLessonText(options = {}) {
   // If semicolon key is unlocked, include semicolon tokens
   if (unlockedSet.has(';')) {
     ['a;', ';a', 'a;a', ';a;', 'ask;', 'dad;', 'all;', 'fall;', 'sad;'].forEach(t => {
+      if (isWordAllowed(t, unlockedSet) && !allowedWords.includes(t)) {
+        allowedWords.push(t);
+      }
+    });
+  }
+
+  // If comma key is unlocked, include comma tokens
+  if (unlockedSet.has(',')) {
+    ['come,', 'cake,', 'cool,', 'face,', 'care,', 'calm,', 'call,', 'deck,', 'rock,', 'much,', 'rich,'].forEach(t => {
+      if (isWordAllowed(t, unlockedSet) && !allowedWords.includes(t)) {
+        allowedWords.push(t);
+      }
+    });
+  }
+
+  // If dot key is unlocked, include dot tokens
+  if (unlockedSet.has('.')) {
+    ['next.', 'text.', 'exam.', 'box.', 'six.', 'taxi.', 'run.', 'help.', 'good.', 'plan.'].forEach(t => {
+      if (isWordAllowed(t, unlockedSet) && !allowedWords.includes(t)) {
+        allowedWords.push(t);
+      }
+    });
+  }
+
+  // If slash key is unlocked, include slash tokens
+  if (unlockedSet.has('/')) {
+    ['in/out', 'on/off', 'up/down', 'day/night', 'true/false'].forEach(t => {
       if (isWordAllowed(t, unlockedSet) && !allowedWords.includes(t)) {
         allowedWords.push(t);
       }
